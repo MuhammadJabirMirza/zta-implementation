@@ -98,14 +98,14 @@ resource "aws_db_instance" "mysql" {
 
   iam_database_authentication_enabled = true
 
-  backup_retention_period = 1
-  copy_tags_to_snapshot   = true
-  auto_minor_version_upgrade = true
+  backup_retention_period         = 1
+  copy_tags_to_snapshot           = true
+  auto_minor_version_upgrade      = true
   enabled_cloudwatch_logs_exports = ["error", "slowquery"]
   #checkov:skip=CKV_AWS_293:Deletion protection off by design - the artefact is destroyed after each evidence window (cost control, documented in Methodology)
   #checkov:skip=CKV_AWS_118:Enhanced monitoring omitted for cost; named in Recommendations for production
-  skip_final_snapshot     = true # dissertation environment only
-  deletion_protection     = false
+  skip_final_snapshot = true # dissertation environment only
+  deletion_protection = false
 
   tags = { Name = "${var.project}-mysql" }
 }

@@ -168,9 +168,9 @@ resource "aws_s3_object" "cis_template" {
 }
 
 resource "aws_config_conformance_pack" "cis" {
-  name             = "${var.project}-cis"
-  template_s3_uri  = "s3://${aws_s3_bucket.evidence.bucket}/${aws_s3_object.cis_template.key}"
-  depends_on       = [aws_config_configuration_recorder_status.this, aws_s3_object.cis_template]
+  name            = "${var.project}-cis"
+  template_s3_uri = "s3://${aws_s3_bucket.evidence.bucket}/${aws_s3_object.cis_template.key}"
+  depends_on      = [aws_config_configuration_recorder_status.this, aws_s3_object.cis_template]
 }
 
 # ----- CloudTrail -----
