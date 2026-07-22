@@ -1,0 +1,42 @@
+name: iac-security-scan
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.0
+
+      - name: Terraform fmt
+        run: terraform fmt -check -recursive
+
+      - name: Terraform validate
+        working-directory: environments/dev
+        run: |
+          terraform init -backend=false
+          terraform validate
+
+      - name: Checkov scan
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: .
+          framework: terraform
+          soft_fail: false
+
+      - name: tfsec scan
+        uses: aquasecurity/tfsec-action@v1.0.3
+        with:
+          soft_fail: false
+          additional_args: --exclude-path exercises
+
+      - name: Bandit scan (Python artefact)
+        run: |
+          pip install bandit
+          bandit -r app/ -ll
