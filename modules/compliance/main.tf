@@ -202,10 +202,15 @@ resource "aws_guardduty_detector" "this" {
 }
 
 # ----- Session Manager content logging (closes the audit limitation) -----
-# Every SSM session transcript ships to CloudWatch Logs, KMS-encrypted.
+
 resource "aws_cloudwatch_log_group" "sessions" {
   #checkov:skip=CKV_AWS_158:Default SSE encryption applies; a CMK for a demo session log adds cost without benefit
   name              = "/${var.project}/ssm-sessions"
+  retention_in_days = 365
+}
+resource "aws_cloudwatch_log_group" "trail" {
+  #checkov:skip=CKV_AWS_158:Default SSE encryption applies; a dedicated CMK for trail logs adds cost without benefit in a single-account lab
+  name              = "/${var.project}/cloudtrail"
   retention_in_days = 365
 }
 
