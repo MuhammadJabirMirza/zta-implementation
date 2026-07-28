@@ -28,6 +28,7 @@ module "compute" {
   private_app_subnet_id = module.networking.private_app_subnet_ids[0]
   app_sg_id             = module.security.app_sg_id
   instance_profile_name = module.security.instance_profile_name
+  network_ready         = module.networking.s3_prefix_list_id
 }
 
 module "compliance" {
@@ -49,3 +50,4 @@ module "proxy" {
   kms_key_arn            = module.database.kms_key_arn
   app_role_name          = module.security.app_role_name
 }
+

@@ -37,6 +37,11 @@ data "aws_ami" "al2023" {
     values = ["al2023-ami-2023*-x86_64"]
   }
 }
+variable "network_ready" {
+  description = "Dependency handle - ensures endpoint routing exists before boot"
+  type        = string
+  default     = ""
+}
 
 resource "aws_instance" "app" {
   #checkov:skip=CKV_AWS_126:Detailed monitoring omitted for cost on a short-lived demo instance
