@@ -42,6 +42,12 @@ resource "aws_s3_bucket" "evidence" {
   force_destroy = true
 }
 
+resource "aws_s3_bucket_logging" "evidence" {
+  bucket        = aws_s3_bucket.evidence.id
+  target_bucket = var.access_logs_bucket
+  target_prefix = "evidence-access-logs/"
+}
+
 resource "aws_s3_bucket_versioning" "evidence" {
   bucket = aws_s3_bucket.evidence.id
   versioning_configuration {
@@ -182,9 +188,11 @@ resource "aws_cloudtrail" "this" {
   name                          = "${var.project}-trail"
   s3_bucket_name                = aws_s3_bucket.evidence.bucket
   include_global_service_events = true
-  is_multi_region_trail         = false
+  is_multi_region_trail         = true
   enable_log_file_validation    = true
   depends_on                    = [aws_s3_bucket_policy.evidence]
+  cloud_watch_logs_group_arn    = "${aws_cloudwatch_log_group.trail.arn}:*"
+  cloud_watch_logs_role_arn     = aws_iam_role.trail_logs.arn
 }
 
 # ----- GuardDuty (30-day free trial covers the sprint) -----
@@ -215,5 +223,34 @@ resource "aws_ssm_document" "session_prefs" {
       cloudWatchEncryptionEnabled = false
       cloudWatchStreamingEnabled  = true
     }
+  })
+}
+resource "aws_cloudwatch_log_group" "trail" {
+  name              = "/${var.project}/cloudtrail"
+  retention_in_days = 365
+}
+
+resource "aws_iam_role" "trail_logs" {
+  name = "${var.project}-cloudtrail-logs-role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect    = "Allow"
+      Principal = { Service = "cloudtrail.amazonaws.com" }
+      Action    = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy" "trail_logs" {
+  name = "${var.project}-cloudtrail-logs"
+  role = aws_iam_role.trail_logs.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = ["logs:CreateLogStream", "logs:PutLogEvents"]
+      Resource = "${aws_cloudwatch_log_group.trail.arn}:*"
+    }]
   })
 }

@@ -3,3 +3,11 @@
 *.tfstate.*
 *.tfvars.secret
 crash.log
+
+.env
+app/.env
+**/.env
+
+
+app/token.txt
+app/global-bundle.pem

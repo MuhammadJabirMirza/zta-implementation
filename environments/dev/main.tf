@@ -35,6 +35,7 @@ module "compliance" {
   count                = var.deploy_compliance ? 1 : 0
   project              = var.project
   evidence_bucket_name = var.evidence_bucket_name
+  access_logs_bucket   = var.access_logs_bucket
 }
 
 module "proxy" {

@@ -31,3 +31,9 @@ variable "db_username" {
   type        = string
   default     = "admin"
 }
+
+variable "access_logs_bucket" {
+  description = "Access logs bucket name, must match the bootstrap default"
+  type        = string
+  default     = "ztrds-access-logs-mjm-2026"
+}

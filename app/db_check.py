@@ -22,7 +22,7 @@ import boto3
 import pymysql
 
 REGION = "eu-west-2"
-LOCAL_HOST, LOCAL_PORT = "127.0.0.1", 3306
+LOCAL_HOST, LOCAL_PORT = "127.0.0.1", 3307
 CA_BUNDLE = "global-bundle.pem"
 
 
@@ -32,7 +32,7 @@ def connect(user: str, password: str) -> None:
         port=LOCAL_PORT,
         user=user,
         password=password,
-        ssl={"ca": CA_BUNDLE},  # TLS enforced server-side too
+        ssl={"ca": CA_BUNDLE, "check_hostname": False},  # chain verified vs RDS CA; hostname check off (tunnel connects via 127.0.0.1)
     )
     with conn.cursor() as cur:
         cur.execute("SELECT CURRENT_USER(), VERSION()")
