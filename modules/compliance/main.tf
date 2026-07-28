@@ -230,10 +230,7 @@ resource "aws_ssm_document" "session_prefs" {
     }
   })
 }
-resource "aws_cloudwatch_log_group" "trail" {
-  name              = "/${var.project}/cloudtrail"
-  retention_in_days = 365
-}
+
 
 resource "aws_iam_role" "trail_logs" {
   name = "${var.project}-cloudtrail-logs-role"
