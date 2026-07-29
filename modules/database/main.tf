@@ -98,7 +98,7 @@ resource "aws_db_instance" "mysql" {
 
   iam_database_authentication_enabled = true
 
-  backup_retention_period         = 1
+  backup_retention_period         = 7
   copy_tags_to_snapshot           = true
   auto_minor_version_upgrade      = true
   enabled_cloudwatch_logs_exports = ["error", "slowquery"]
