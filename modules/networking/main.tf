@@ -112,7 +112,7 @@ resource "aws_route_table_association" "private_db" {
 
 # VPC endpoints so a fully private instance can reach SSM.
 locals {
-  ssm_services = var.enable_ssm_endpoints ? ["ssm", "ssmmessages", "ec2messages", "secretsmanager"] : []
+  ssm_services = var.enable_ssm_endpoints ? ["ssm", "ssmmessages", "ec2messages", "secretsmanager", "logs"] : []
   # secretsmanager endpoint: REQUIRED by RDS Proxy. The proxy ENIs live in the
   # private subnets (no internet route) and must fetch the DB secret from
   # Secrets Manager at connection time. Without this endpoint the proxy

@@ -67,6 +67,26 @@ resource "aws_security_group" "app" {
   tags = { Name = "${var.project}-app-sg" }
 }
 
+resource "aws_iam_role_policy" "session_logging" {
+  name = "${var.project}-session-logging"
+  role = aws_iam_role.app_instance.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = ["logs:DescribeLogGroups"]
+        Resource = "*"
+      },
+      {
+        Effect   = "Allow"
+        Action   = ["logs:CreateLogStream", "logs:PutLogEvents", "logs:DescribeLogStreams"]
+        Resource = "arn:aws:logs:*:*:log-group:/${var.project}/ssm-sessions:*"
+      }
+    ]
+  })
+}
+
 resource "aws_security_group" "db" {
   name        = "${var.project}-db-sg"
   description = "DB tier - MySQL from app SG only, no egress needed"

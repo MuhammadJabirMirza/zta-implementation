@@ -127,23 +127,23 @@ data "aws_iam_policy_document" "bucket_policy" {
     }
   }
   statement {
-  sid     = "DenyInsecureTransport"
-  effect  = "Deny"
-  actions = ["s3:*"]
-  resources = [
-    aws_s3_bucket.evidence.arn,
-    "${aws_s3_bucket.evidence.arn}/*"
-  ]
-  principals {
-    type        = "*"
-    identifiers = ["*"]
+    sid     = "DenyInsecureTransport"
+    effect  = "Deny"
+    actions = ["s3:*"]
+    resources = [
+      aws_s3_bucket.evidence.arn,
+      "${aws_s3_bucket.evidence.arn}/*"
+    ]
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values   = ["false"]
+    }
   }
-  condition {
-    test     = "Bool"
-    variable = "aws:SecureTransport"
-    values   = ["false"]
-  }
-}
 
 }
 
