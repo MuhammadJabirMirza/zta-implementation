@@ -147,15 +147,15 @@ resource "aws_vpc_endpoint" "s3" {
 # though the endpoint existed. Gateway endpoints are matched in SG rules by
 # PREFIX LIST, never by CIDR. Interface endpoints (SSM) have in-VPC IPs, which
 # is why SSM worked while dnf failed.
-resource "aws_security_group_rule" "app_https_to_s3_gateway" {
-  type              = "egress"
-  description       = "HTTPS to regional S3 via gateway endpoint (AL2023 dnf repos)"
-  from_port         = 443
-  to_port           = 443
-  protocol          = "tcp"
-  prefix_list_ids   = [aws_vpc_endpoint.s3.prefix_list_id]
-  security_group_id = var.app_security_group_id
-}
+# resource "aws_security_group_rule" "app_https_to_s3_gateway" {
+#   type              = "egress"
+#   description       = "HTTPS to regional S3 via gateway endpoint (AL2023 dnf repos)"
+#   from_port         = 443
+#   to_port           = 443
+#   protocol          = "tcp"
+#   prefix_list_ids   = [aws_vpc_endpoint.s3.prefix_list_id]
+#   security_group_id = var.app_security_group_id
+# }
 
 # Zero-trust hygiene + CKV2_AWS_12: the VPC default SG must hold no rules so
 # any resource accidentally launched without an explicit SG can talk to nothing.

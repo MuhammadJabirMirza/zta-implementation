@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 REGION = os.getenv("AWS_REGION")
 PROXY = os.getenv("PROXY_ENDPOINT")
-PORT = int(os.getenv("LOCAL_PORT", 3307))
+PORT = int(os.getenv("PROXY_PORT", 3308))
 
 token = boto3.client("rds", region_name=REGION).generate_db_auth_token(
     DBHostname=PROXY, Port=3306, DBUsername="admin")

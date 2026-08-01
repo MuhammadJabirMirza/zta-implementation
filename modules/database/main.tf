@@ -57,13 +57,16 @@ resource "aws_kms_alias" "db" {
 
 # Proposal commitment: TLS enforced in transit via the parameter group.
 resource "aws_db_parameter_group" "mysql" {
-  name   = "${var.project}-mysql8"
-  family = "mysql8.0"
+  name   = "${var.project}-mysql84"
+  family = "mysql8.4"
 
   parameter {
-    name  = "require_secure_transport"
-    value = "1"
+    name         = "require_secure_transport"
+    value        = "1"
+    apply_method = "immediate"
   }
+
+
 }
 
 resource "aws_db_subnet_group" "this" {
@@ -73,10 +76,12 @@ resource "aws_db_subnet_group" "this" {
 }
 
 resource "aws_db_instance" "mysql" {
-  identifier     = "${var.project}-mysql"
-  engine         = "mysql"
-  engine_version = "8.0"
-  instance_class = "db.t3.micro" # Free Tier
+  identifier                  = "${var.project}-mysql"
+  engine                      = "mysql"
+  engine_version              = "8.4.10"
+  allow_major_version_upgrade = true
+  apply_immediately           = true
+  instance_class              = "db.t3.micro" # Free Tier
 
   allocated_storage = 20
   storage_type      = "gp3"

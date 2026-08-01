@@ -42,6 +42,13 @@
 #      referenced by SG id, never by CIDR.
 #   3. The instance role carries exactly one managed policy:
 #      AmazonSSMManagedInstanceCore. No SSH key pair exists anywhere.
+# The S3 gateway endpoint is matched in security group rules by managed
+# prefix list, never by CIDR, because it routes to S3 public address ranges.
+data "aws_region" "current" {}
+
+data "aws_prefix_list" "s3" {
+  name = "com.amazonaws.${data.aws_region.current.name}.s3"
+}
 
 resource "aws_security_group" "app" {
   name        = "${var.project}-app-sg"
@@ -62,6 +69,14 @@ resource "aws_security_group" "app" {
     to_port     = 3306
     protocol    = "tcp"
     cidr_blocks = [var.vpc_cidr]
+  }
+
+  egress {
+    description     = "HTTPS to regional S3 via gateway endpoint (AL2023 dnf repos)"
+    from_port       = 443
+    to_port         = 443
+    protocol        = "tcp"
+    prefix_list_ids = [data.aws_prefix_list.s3.id]
   }
 
   tags = { Name = "${var.project}-app-sg" }
